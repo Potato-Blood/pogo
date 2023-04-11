@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Example</title>
+  <script>
+    var ws = new WebSocket("ws://localhost:9001");
+
+    ws.onmessage = function (event) {
+      var h1 = document.getElementById("message");
+      console.log(event.data)
+      h1.innerHTML = event.data;
+      //do some more stuff
+      ws.send("readyformore!");
+    };
+  </script>
+</head>
+
+<body>
+  <h1 id="message">Waiting for WebSocket messages...</h1>
+</body>
+
+</html>
