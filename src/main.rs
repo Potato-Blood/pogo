@@ -1,12 +1,10 @@
 use rdev::{listen as rlisten, ListenError};
 use std::{
-    borrow::BorrowMut,
-    collections::HashSet,
     sync::{mpsc, Arc, Mutex},
     thread::{self, JoinHandle},
 };
 
-use ws::{listen, CloseCode, Handler, Handshake, Message, Result, Sender as WsSender, WebSocket};
+use ws::{CloseCode, Handler, Handshake, Message, Result, Sender as WsSender, WebSocket};
 
 fn main() {
     println!("Hello, world!");
@@ -81,7 +79,7 @@ impl WebSocketHandler {
 
 fn make_websocket_server_thread(rx: Arc<Mutex<mpsc::Receiver<String>>>) -> JoinHandle<()> {
     let ws_thread = thread::spawn(move || {
-        let server = WebSocket::new(|out| WebSocketHandler {
+        let _server = WebSocket::new(|out| WebSocketHandler {
             out,
             rx: rx.clone(),
         })
