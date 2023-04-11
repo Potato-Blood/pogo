@@ -11,7 +11,17 @@
       var h1 = document.getElementById("message");
       console.log(event.data)
       h1.innerHTML = event.data;
+
       //do some more stuff
+      if (event.data.startsWith("Hack:")) {
+        const substrings = event.data.split(" ").slice(1)
+        let r = parseInt(substrings[0])
+        let g = parseInt(substrings[1])
+        let b = parseInt(substrings[2])
+        h1.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+      }
+
+
       ws.send("readyformore!");
     };
   </script>
