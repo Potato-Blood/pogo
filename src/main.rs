@@ -13,11 +13,9 @@ fn main() {
     let rx = Arc::new(Mutex::new(rx));
 
     let lt = make_listener_thread(tx);
-    let pt = make_printer_thread(rx.clone());
     let wst = make_websocket_server_thread(rx);
 
     lt.join().unwrap();
-    pt.join().unwrap();
     wst.join().unwrap();
 }
 
@@ -27,41 +25,16 @@ fn make_listener_thread(
     let listener_thread = thread::spawn(move || {
         rlisten(move |event| match event.event_type {
             rdev::EventType::MouseMove { x, y } => {
-                let r: u8 = 75;
-                let old_min = 0.0;
-                let old_max = 5140.0;
-                let new_min = 0.0;
-                let new_max = 255.0;
-                let scaled_value =
-                    (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min;
-                let g: u8 = scaled_value as u8;
-                let old_min = 0.0;
-                let old_max = 1440.0;
-                let new_min = 0.0;
-                let new_max = 255.0;
-                let scaled_value =
-                    (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min;
-                let b: u8 = scaled_value as u8;
-                let msg = format!("Hack: {} {} {}", r, g, b);
+                let msg = format!("Hack: {} {}", x, y);
                 tx.send(msg).unwrap();
             }
             (_) => {
-                let msg = format!("{:?}", event);
-                tx.send(msg).unwrap();
+                tx.send("KeyPressed".to_owned()).unwrap();
             }
         })
     });
 
     return listener_thread;
-}
-
-fn make_printer_thread(rx: Arc<Mutex<mpsc::Receiver<String>>>) -> JoinHandle<()> {
-    let printer_thread = thread::spawn(move || loop {
-        let message = rx.lock().unwrap().recv().unwrap();
-        println!("{}", message);
-    });
-
-    return printer_thread;
 }
 
 struct WebSocketHandler {
