@@ -26,6 +26,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 ws.onmessage = function (event) {
+  console.log(event.data)
   if (event.data.includes("KeyPress")) {
     keyPress = true;
   } else if (event.data.includes("KeyRelease")) {

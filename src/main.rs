@@ -25,11 +25,16 @@ fn make_listener_thread(
     let listener_thread = thread::spawn(move || {
         rlisten(move |event| match event.event_type {
             rdev::EventType::MouseMove { x, y } => {
-                let msg = format!("Hack: {} {}", x, y);
+                let msg = format!("MouseMove: {} {}", x, y);
                 tx.send(msg).unwrap();
             }
-            (_) => {
-                tx.send("KeyPressed".to_owned()).unwrap();
+            rdev::EventType::KeyPress(_) => tx.send("KeyPress".to_owned()).unwrap(),
+            rdev::EventType::KeyRelease(_) => tx.send("KeyRelease".to_owned()).unwrap(),
+            rdev::EventType::ButtonPress(_) => tx.send("ButtonPress".to_owned()).unwrap(),
+            rdev::EventType::ButtonRelease(_) => tx.send("ButtonRelease".to_owned()).unwrap(),
+            rdev::EventType::Wheel { delta_x, delta_y } => {
+                let msg = format!("WheelMove: {} {}", delta_x, delta_y);
+                tx.send(msg).unwrap();
             }
         })
     });
