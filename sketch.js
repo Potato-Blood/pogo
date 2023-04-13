@@ -5,21 +5,41 @@ let blinkDelay = 200;
 let tick = 0;
 let mousePosX = 0;
 let mousePosY = 0;
-const ws = new WebSocket("ws://localhost:9001");
 
-ws.onmessage = function (event) {
-  if (event.data.includes("KeyPress")) {
-    keyPress = true;
-  } else if (event.data.includes("KeyRelease")) {
-    keyPress = false;
+// Created a websocket that when closed tries to reconnet with some backoff
+startWebsocket = (ip, port, backoff) => {
+  console.log("Attempting to connect to websocket")
+  var ws = new WebSocket(`ws://${ip}:${port}`);
+
+
+  ws.onmessage = function (event) {
+    if (event.data.includes("KeyPress")) {
+      keyPress = true;
+    } else if (event.data.includes("KeyRelease")) {
+      keyPress = false;
+    }
+    if (event.data.includes("MouseMove:")) {
+      const [_, x, y] = event.data.split(" ");
+      mousePosX = x;
+      mousePosY = y;
+    }
+    ws.send("readyformore!");
+  };
+
+  ws.onclose = function (event) {
+    ws = null
+    console.log(`Websocket closed, retying with backoff of ${backoff}ms`)
+
+    // 1 minute as the max backoff 
+    if (backoff >= 60000) {
+      backoff = 60000
+    }
+    setTimeout(startWebsocket(ip, port, backoff * 2), backoff)
   }
-  if (event.data.includes("MouseMove:")) {
-    const [_, x, y] = event.data.split(" ");
-    mousePosX = x;
-    mousePosY = y;
-  }
-  ws.send("readyformore!");
-};
+
+}
+
+startWebsocket("localhost", "9001", 32); // Start the websocket with expoentional backoff
 
 function preload() {
   images.mouthClosedEyesOpen = loadImage("assets/1.png");
