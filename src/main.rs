@@ -6,14 +6,19 @@ use std::{
 
 use ws::{CloseCode, Handler, Handshake, Message, Result, Sender as WsSender, WebSocket};
 
+const MAPPED_HEIGHT_MAX: f64 = 1080.0;
+const MAPPED_WIDTH_MAX: f64 = 1920.0;
+
 fn main() {
-    println!("Hello, world!");
+    println!("Starting Pogo...");
 
     let (tx, rx): (mpsc::Sender<String>, mpsc::Receiver<String>) = mpsc::channel();
     let rx = Arc::new(Mutex::new(rx));
 
     let lt = make_listener_thread(tx);
+    println!("Keyboard Listener started");
     let wst = make_websocket_server_thread(rx);
+    println!("Websocket Server started");
 
     lt.join().unwrap();
     wst.join().unwrap();
@@ -22,9 +27,15 @@ fn main() {
 fn make_listener_thread(
     tx: mpsc::Sender<String>,
 ) -> JoinHandle<core::result::Result<(), ListenError>> {
-    let listener_thread = thread::spawn(move || {
+    thread::spawn(move || {
+        let (monitor_width, monitor_height) = rdev::display_size().unwrap();
+        let monitor_width = monitor_width as f64;
+        let monitor_height = monitor_height as f64;
+
         rlisten(move |event| match event.event_type {
             rdev::EventType::MouseMove { x, y } => {
+                let x = MAPPED_WIDTH_MAX / (monitor_width) * x;
+                let y = MAPPED_HEIGHT_MAX / (monitor_height) * y;
                 let msg = format!("MouseMove: {} {}", x, y);
                 tx.send(msg).unwrap();
             }
@@ -37,9 +48,7 @@ fn make_listener_thread(
                 tx.send(msg).unwrap();
             }
         })
-    });
-
-    return listener_thread;
+    })
 }
 
 struct WebSocketHandler {
@@ -63,21 +72,8 @@ impl Handler for WebSocketHandler {
     }
 }
 
-impl WebSocketHandler {
-    fn bc(&mut self, msg: String) -> Result<()> {
-        self.out.send(msg)
-    }
-
-    fn run(&mut self) -> Result<()> {
-        loop {
-            let message = self.rx.lock().unwrap().recv().unwrap();
-            self.out.broadcast(Message::text(message))?;
-        }
-    }
-}
-
 fn make_websocket_server_thread(rx: Arc<Mutex<mpsc::Receiver<String>>>) -> JoinHandle<()> {
-    let ws_thread = thread::spawn(move || {
+    thread::spawn(move || {
         let server = WebSocket::new(|out| WebSocketHandler {
             out,
             rx: rx.clone(),
@@ -85,7 +81,5 @@ fn make_websocket_server_thread(rx: Arc<Mutex<mpsc::Receiver<String>>>) -> JoinH
         .unwrap()
         .listen("localhost:9001")
         .unwrap();
-    });
-
-    return ws_thread;
+    })
 }
