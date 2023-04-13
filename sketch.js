@@ -52,9 +52,20 @@ function draw() {
   const imgHand = keyPress ? images.mouthOpenEyesClosed : images.keyPressUp;
 
   const mouseOffsetX = 140;
-  const mouseOffsetY = 260;
-  const scaledMouseY = (mousePosY - 240) / (209 - 240) + mouseOffsetY;
-  const scaledMouseX = (mousePosX - 240) / (209 - 240) + mouseOffsetX;
+  const mouseOffsetY = 270;
+  const cosAngleX = Math.cos(Math.PI / 1.3);
+  const sinAngleX = Math.sin(Math.PI / 1.3);
+  const deltaX = mousePosX - 240;
+
+  const cosAngleY = Math.cos(Math.PI / 1.1);
+  const sinAngleY = Math.sin(Math.PI / 1.1);
+  const deltaY = mousePosY - 240;
+
+  const rotatedX = deltaX * cosAngleX + deltaY * sinAngleX;
+  const rotatedY = deltaY * cosAngleY - deltaX * sinAngleY;
+
+  const scaledMouseX = rotatedX / (240 - 215) + mouseOffsetX;
+  const scaledMouseY = rotatedY / (240 - 190) + mouseOffsetY;
 
   background(0, 255, 0);
   image(images.bg, 0, 0);
