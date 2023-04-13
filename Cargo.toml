@@ -2,6 +2,8 @@
 name = "pogo"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "The backend of Pogo - a lightweight bit of software used for streaming as a pngtuber. see more at https://github.com/AmrikSD/pogo"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
