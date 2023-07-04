@@ -1,5 +1,6 @@
 const images = {};
 let blinking = false;
+let talking = false;
 let keyPress = false;
 
 let blinkDelayMax = 200;
@@ -17,6 +18,7 @@ startWebsocket = (ip, port, backoff) => {
   var ws = new WebSocket(`ws://${ip}:${port}`);
 
   ws.onmessage = function (event) {
+    //console.log(event);
     if (event.data.includes("KeyPress")) {
       keyPress = true;
     } else if (event.data.includes("KeyRelease")) {
@@ -26,6 +28,11 @@ startWebsocket = (ip, port, backoff) => {
       const [_, x, y] = event.data.split(" ");
       mousePosX = x;
       mousePosY = y;
+    }
+    if (event.data.includes("VoiceOn")) {
+      talking = true;
+    } else if (event.data.includes("VoiceOff")) {
+      talking = false;
     }
     ws.send("readyformore!");
   };
@@ -70,9 +77,15 @@ function draw() {
     tick = 0;
     blinkDelay = Math.floor(random(blinkDelayMin, blinkDelayMax));
   }
-  const imgBlinking = blinking
-    ? images.mouthClosedEyesClosed
-    : images.mouthClosedEyesOpen;
+  let imgBlinking = images.mouthClosedEyesOpen;
+  if (talking && blinking) {
+    imgBlinking = images.mouthOpenEyesClosed;
+  } else if (talking) {
+    imgBlinking = images.mouthOpenEyesOpen;
+  } else if (blinking) {
+    imgBlinking = images.mouthClosedEyesClosed;
+  }
+
   const imgHand = keyPress ? images.keyPressDown : images.keyPressUp;
 
   // Calculate mouse offset and rotation
