@@ -1,7 +1,14 @@
 # Pogo, a little program to make PNG-tubing a little easier
 
-# Debug
+# TL;DR
+
+## Debug
 `make serve`
 
-# Build
+## Build
 `make`
+
+
+# Frontend
+
+# Backend
