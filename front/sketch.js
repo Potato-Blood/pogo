@@ -53,6 +53,7 @@ startWebsocket("localhost", "9001", 32); // Start the websocket with expoentiona
 
 // Load images before setup
 function preload() {
+  
   images.mouthClosedEyesOpen = loadImage("assets/1.png");
   images.mouthClosedEyesClosed = loadImage("assets/2.png");
   images.mouthOpenEyesOpen = loadImage("assets/3.png");
@@ -61,6 +62,7 @@ function preload() {
   images.keyPressUp = loadImage("assets/up.png");
   images.bg = loadImage("assets/bg.png");
   images.mouse = loadImage("assets/mouse.png");
+
 }
 
 function setup() {
@@ -88,9 +90,11 @@ function draw() {
 
   const imgHand = keyPress ? images.keyPressDown : images.keyPressUp;
 
+
+
   // Calculate mouse offset and rotation
   const mouseOffsetX = 120;
-  const mouseOffsetY = 260;
+  const mouseOffsetY = 260 + 229;
 
   const cosAngleX = Math.cos(Math.PI / 1.3);
   const sinAngleX = Math.sin(Math.PI / 1.3);
@@ -107,21 +111,23 @@ function draw() {
   const scaledMouseY = rotatedY / (240 - 190) + mouseOffsetY;
 
   // Draw background and images in order
-  background(0, 255, 0);
+    //background(0, 255, 0);
+  clear();
   image(images.bg, 0, 0);
   image(imgBlinking, 0, 0);
+
   image(imgHand, 0, 0);
   image(images.mouse, scaledMouseX - 35, scaledMouseY - 25);
 
-  const fillColour = color("#6abd8f");
-  const strokeColour = color("#847669");
+  const fillColour = color("#75c687");
+  const strokeColour = color("#31556b");
 
   fill(fillColour);
   stroke(fillColour);
   strokeWeight(1);
 
   // Draw triangle to fill the missing area left by the curves
-  triangle(225, 170, 200, 119, scaledMouseX, scaledMouseY);
+  triangle(225, 170+229, 200, 119+229, scaledMouseX, scaledMouseY);
 
   strokeWeight(6);
   stroke(strokeColour);
@@ -131,20 +137,21 @@ function draw() {
     -400 + scaledMouseX * 5, //c1
     scaledMouseY / 3, //c1
     225, //x1
-    170, //y1
+    170+229, //y1
     scaledMouseX, //x2
     scaledMouseY, //y2
     0, //c2
-    0 //c2
+    229 //c2
   );
   curve(
     -100 + scaledMouseX * 5, //c1
-    scaledMouseY / 3, //c1
+    (scaledMouseY+329) / 3 , //c1
     200, //x1
-    119, //y1
+    119+229, //y1
     scaledMouseX, //x2
     scaledMouseY, //y2
-    300, //c2
-    200 //c2
+    300 , //c2
+    200 + 229//c2
   );
+
 }
