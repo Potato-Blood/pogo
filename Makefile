@@ -32,7 +32,7 @@ run: all
 serve:
 	start http://localhost:$(SERVER_PORT) &
 	make run &
-	cd $(JS_BUILD_DIR) && python -m http.server $(SERVER_PORT) &
+	cd $(JS_BUILD_DIR) && python -m http.server $(SERVER_PORT)
 
 clean:
 	rm -rf $(BUILD_DIR)

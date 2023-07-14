@@ -49,7 +49,7 @@ fn main() {
             for &sample in data {
                 // println!("{:?}", sample); // USE THIS SAMPLE NUMBER
                 // let mut open = false;
-                if sample <= 10.0 {
+                if sample == 0.0 {
                     listener.send("VoiceOff".to_owned()).unwrap();
                     // println!("{:?}", sample.abs()); // USE THIS SAMPLE NUMBER
                 } else {
@@ -102,7 +102,7 @@ fn make_listener_thread(
                     .as_millis();
 
                 //TODO: make this configurable
-                if diff_in_ms <= 20 {
+                if diff_in_ms <= 10 {
                     return;
                 }
 
@@ -115,7 +115,13 @@ fn make_listener_thread(
             }
             rdev::EventType::KeyPress(_) => tx.send("KeyPress".to_owned()).unwrap(),
             rdev::EventType::KeyRelease(_) => tx.send("KeyRelease".to_owned()).unwrap(),
-            rdev::EventType::ButtonPress(_) => tx.send("ButtonPress".to_owned()).unwrap(),
+            rdev::EventType::ButtonPress(btn) => match btn {
+                rdev::Button::Unknown(key_num) => match key_num {
+                    2 => tx.send("RandomHat".to_owned()).unwrap(), //FIXME: make this configurable via YAML or some other means
+                    _ => tx.send("ButtonPressed".to_owned()).unwrap(),
+                },
+                _ => tx.send("ButtonPressed".to_owned()).unwrap(),
+            },
             rdev::EventType::ButtonRelease(_) => tx.send("ButtonRelease".to_owned()).unwrap(),
             rdev::EventType::Wheel { delta_x, delta_y } => {
                 let msg = format!("WheelMove: {} {}", delta_x, delta_y);
