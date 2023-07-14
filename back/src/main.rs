@@ -49,7 +49,7 @@ fn main() {
             for &sample in data {
                 // println!("{:?}", sample); // USE THIS SAMPLE NUMBER
                 // let mut open = false;
-                if sample == 0.0 {
+                if sample <= 10.0 {
                     listener.send("VoiceOff".to_owned()).unwrap();
                     // println!("{:?}", sample.abs()); // USE THIS SAMPLE NUMBER
                 } else {
