@@ -12,13 +12,20 @@ let tick = 0;
 let mousePosX = 0;
 let mousePosY = 0;
 
+const numOfHats = 6; // FIXME: when YAML available, move to that instaead of hard coding trash
+const hats = new Array(numOfHats)
+let hatIdx = 0;
+let hatEnabled = false;
+
 // Created a websocket that when closed tries to reconnet with some backoff
 startWebsocket = (ip, port, backoff) => {
   console.log("Attempting to connect to websocket");
   var ws = new WebSocket(`ws://${ip}:${port}`);
 
   ws.onmessage = function (event) {
-    //console.log(event);
+    // if (!event.data.includes("Voice")) {
+    //   console.log(event);
+    // }
     if (event.data.includes("KeyPress")) {
       keyPress = true;
     } else if (event.data.includes("KeyRelease")) {
@@ -34,10 +41,19 @@ startWebsocket = (ip, port, backoff) => {
     } else if (event.data.includes("VoiceOff")) {
       talking = false;
     }
+    if (event.data.includes("RandomHat")) {
+      hatEnabled = true;
+      prevIdx = hatIdx
+      hatIdx = Math.floor(Math.random() * hats.length)
+      if (hatIdx == prevIdx) {
+        hatIdx = (hatIdx + 1) % hats.length
+      }
+      console.log(hatIdx)
+    }
     ws.send("readyformore!");
   };
 
-  ws.onclose = function (event) {
+  ws.onclose = function () {
     ws = null;
     console.log(`Websocket closed, retying with backoff of ${backoff}ms`);
 
@@ -53,7 +69,7 @@ startWebsocket("localhost", "9001", 32); // Start the websocket with expoentiona
 
 // Load images before setup
 function preload() {
-  
+
   images.mouthClosedEyesOpen = loadImage("assets/1.png");
   images.mouthClosedEyesClosed = loadImage("assets/2.png");
   images.mouthOpenEyesOpen = loadImage("assets/3.png");
@@ -62,6 +78,10 @@ function preload() {
   images.keyPressUp = loadImage("assets/up.png");
   images.bg = loadImage("assets/bg.png");
   images.mouse = loadImage("assets/mouse.png");
+
+  for (let i = 0; i < numOfHats; i++) {
+    hats[i] = loadImage(`assets/hats/${i}.png`)
+  }
 
 }
 
@@ -91,7 +111,6 @@ function draw() {
   const imgHand = keyPress ? images.keyPressDown : images.keyPressUp;
 
 
-
   // Calculate mouse offset and rotation
   const mouseOffsetX = 120;
   const mouseOffsetY = 260 + 229;
@@ -111,7 +130,7 @@ function draw() {
   const scaledMouseY = rotatedY / (240 - 190) + mouseOffsetY;
 
   // Draw background and images in order
-    //background(0, 255, 0);
+  //background(0, 255, 0);
   clear();
   image(images.bg, 0, 0);
   image(imgBlinking, 0, 0);
@@ -127,7 +146,7 @@ function draw() {
   strokeWeight(1);
 
   // Draw triangle to fill the missing area left by the curves
-  triangle(225, 170+229, 200, 119+229, scaledMouseX, scaledMouseY);
+  triangle(225, 170 + 229, 200, 119 + 229, scaledMouseX, scaledMouseY);
 
   strokeWeight(6);
   stroke(strokeColour);
@@ -137,7 +156,7 @@ function draw() {
     -400 + scaledMouseX * 5, //c1
     scaledMouseY / 3, //c1
     225, //x1
-    170+229, //y1
+    170 + 229, //y1
     scaledMouseX, //x2
     scaledMouseY, //y2
     0, //c2
@@ -145,13 +164,22 @@ function draw() {
   );
   curve(
     -100 + scaledMouseX * 5, //c1
-    (scaledMouseY+329) / 3 , //c1
+    (scaledMouseY + 329) / 3, //c1
     200, //x1
-    119+229, //y1
+    119 + 229, //y1
     scaledMouseX, //x2
     scaledMouseY, //y2
-    300 , //c2
+    300, //c2
     200 + 229//c2
   );
+  drawHat(hatIdx)
+}
+
+function drawHat(hatIdx) {
+
+  var hat = hats[hatIdx]
+
+  hat.resize(600, 600)
+  image(hat, 5, 5)
 
 }
