@@ -1,18 +1,17 @@
-
 use std::{
     sync::{mpsc, Arc, Mutex},
     thread::{self, JoinHandle},
 };
 
-use ws::{CloseCode, Handler, Handshake, Message, Result, Sender as WsSender, WebSocket};
+use ws::{CloseCode, Handler, Handshake, Message, Result, Sender, WebSocket};
 
 struct WebSocketHandler {
-    out: WsSender,
+    out: Sender,
     rx: Arc<Mutex<mpsc::Receiver<String>>>,
 }
 
 impl Handler for WebSocketHandler {
-    fn on_message(&mut self, msg: Message) -> Result<()> {
+    fn on_message(&mut self, _msg: Message) -> Result<()> {
         let message = self.rx.lock().unwrap().recv().unwrap();
         self.out.send(Message::text(message))
     }
