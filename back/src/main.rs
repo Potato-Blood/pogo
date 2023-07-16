@@ -1,23 +1,16 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-
 use std::sync::{mpsc, Arc, Mutex};
-use std::{thread, time};
+
+mod listeners;
+mod utils;
+mod websockets;
+use crate::listeners::kbm_listener::*;
+use crate::utils::*;
+use crate::websockets::*;
 
 const MAPPED_HEIGHT_MAX: f64 = 1080.0;
 const MAPPED_WIDTH_MAX: f64 = 1920.0;
 const AUDIO_SAMPLE_DELAY_MS: u64 = 10;
-
-fn wait_ms(ms: u64) {
-    let duration = time::Duration::from_millis(ms);
-    thread::sleep(duration);
-}
-
-mod listeners;
-
-use crate::listeners::kbm_listener::*;
-
-mod websockets;
-use crate::websockets::*;
 
 fn main() {
     println!("Starting Pogo...");
