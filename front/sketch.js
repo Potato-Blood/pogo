@@ -12,7 +12,7 @@ let tick = 0;
 let mousePosX = 0;
 let mousePosY = 0;
 
-const numOfHats = 6; // FIXME: when YAML available, move to that instaead of hard coding trash
+const numOfHats = 20; // FIXME: when YAML available, move to that instaead of hard coding trash
 const hats = new Array(numOfHats)
 let hatIdx = 0;
 let hatEnabled = false;
@@ -179,7 +179,7 @@ function drawHat(hatIdx) {
 
   var hat = hats[hatIdx]
 
-  hat.resize(600, 600)
-  image(hat, 5, 5)
+  hat.resize(612, 612)
+  image(hat, 1, 0)
 
 }
