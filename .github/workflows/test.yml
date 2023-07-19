@@ -1,0 +1,17 @@
+name: Security audit
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.rs'
+      - '**/Cargo.toml'
+      - '**/cargo.lock'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build --manifest-path back/Cargo.toml --verbose
+      - name: Run tests
+        run: cargo test --manifest-path back/Cargo.toml --verbose
