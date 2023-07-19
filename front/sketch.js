@@ -16,6 +16,7 @@ const numOfHats = 20; // FIXME: when YAML available, move to that instaead of ha
 const hats = new Array(numOfHats)
 let hatIdx = 0;
 let hatEnabled = false;
+let hatSpinCount = 0;
 
 // Created a websocket that when closed tries to reconnet with some backoff
 startWebsocket = (ip, port, backoff) => {
@@ -43,12 +44,13 @@ startWebsocket = (ip, port, backoff) => {
     }
     if (event.data.includes("RandomHat")) {
       hatEnabled = true;
-      prevIdx = hatIdx
-      hatIdx = Math.floor(Math.random() * hats.length)
+      prevIdx = hatIdx;
+      hatIdx = Math.floor(Math.random() * hats.length);
       if (hatIdx == prevIdx) {
-        hatIdx = (hatIdx + 1) % hats.length
+        hatIdx = (hatIdx + 1) % hats.length;
       }
-      console.log(hatIdx)
+      hatSpinCount = 20;
+      console.log(hatIdx);
     }
     ws.send("readyformore!");
   };
@@ -174,12 +176,38 @@ function draw() {
   );
   drawHat(hatIdx)
 }
+var delay = 1;
+var delayFactor = 1; 
+var fastDelayCycles = 6; 
+var currentCycle = 0; 
+var hat;
 
 function drawHat(hatIdx) {
+  if (delay > 0) {
+    delay -= 1;
+    //console.log(delay);
+  } else {
+    if (hatSpinCount > 0) {
+      //console.log("HatSpinCount: " + hatSpinCount);
+      hat = hats[Math.floor(Math.random() * hats.length)];
+      hatSpinCount -= 1;
 
-  var hat = hats[hatIdx]
+      if (currentCycle < fastDelayCycles) {
+        delay = 1;
+        currentCycle += 1;
+      } else {
+        delay = delayFactor; 
+        delayFactor += 1; 
+      }
+    } else {
+      hat = hats[hatIdx];
+      delayFactor = 1; 
+      currentCycle = 0; 
+    }
+  }
 
-  hat.resize(612, 612)
-  image(hat, 1, 0)
-
+  if (hat) {
+    hat.resize(612, 612);
+    image(hat, 1, 0);
+  }
 }
