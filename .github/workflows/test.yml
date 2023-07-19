@@ -1,4 +1,4 @@
-name: Security audit
+name: Rust CI - Build & Tests
 on:
   workflow_dispatch:
   push:
