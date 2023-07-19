@@ -1,6 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/rust
 {
+	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.base.schema.json",
 	"name": "Rust",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"build": {
@@ -8,13 +9,18 @@
 	},
 
 	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
-	// "mounts": [
-	// 	{
-	// 		"source": "devcontainer-cargo-cache-${devcontainerId}",
-	// 		"target": "/usr/local/cargo",
-	// 		"type": "volume"
-	// 	}
-	// ]
+	"mounts": [
+		{
+			"source": "devcontainer-cargo-cache-${devcontainerId}",
+			"target": "/usr/local/cargo",
+			"type": "volume"
+		},
+		{
+			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/.gnupg",
+			"target": "/home/vscode/.gnupg",
+			"type": "bind"
+		}
+	],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -23,7 +29,7 @@
 	"forwardPorts": [ 8000 ],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "rustup target add x86_64-pc-windows-gnu && rustc --version"
+	"postCreateCommand": "rustc --version"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
