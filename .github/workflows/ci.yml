@@ -18,7 +18,7 @@ jobs:
       - name: Run tests
         run: cargo test --manifest-path back/Cargo.toml --verbose
       - name: Run linter
-        uses: wearerequired/lint-action@v2
+        uses: wearerequired/lint-action@v2.3.0
         with:
           rustfmt: true
           rustfmt_args: "--all --manifest-path back/Cargo.toml"
