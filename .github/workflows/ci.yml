@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up cargo cache
@@ -30,12 +32,8 @@ jobs:
       - name: Run tests
         run: cargo test --manifest-path back/Cargo.toml --verbose
       - name: Run linter
-        uses: wearerequired/lint-action
+        run: cargo fmt --manifest-path back/Cargo.toml --all
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          rustfmt: true
-          rustfmt_args: "--all --manifest-path back/Cargo.toml"
-          auto_fix: true
-          commit: true
-          commit_message: "✨ Automatic code linting with ${linter}"
-          git_name: "PotatoBloodCICD"
-          git_email: "amrik.singh+pbcicd@live.co.uk" 
+          commit_message: ✨ Apply cargo fmt linter
