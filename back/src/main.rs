@@ -28,5 +28,7 @@ fn main() {
     kbm_lt.join().unwrap();
     wst.join().unwrap();
 
+    println!("no merge pls");
+
     loop {}
 }
