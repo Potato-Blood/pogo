@@ -17,3 +17,13 @@ jobs:
         run: cargo build --manifest-path back/Cargo.toml --verbose
       - name: Run tests
         run: cargo test --manifest-path back/Cargo.toml --verbose
+      - name: Run linter
+        uses: wearerequired/lint-action@v2
+        with:
+          rustfmt: true
+          rustfmt_args: "--all --manifest-path back/Cargo.toml"
+          auto_fix: true
+          commit: true
+          commit_message: "✨ Automatic code linting with ${linter}"
+          git_name: "PotatoBloodCICD"
+          git_email: "amrik.singh+pbcicd@live.co.uk" 
