@@ -28,7 +28,8 @@ fn main() {
     kbm_lt.join().unwrap();
     wst.join().unwrap();
 
-    println!("dumb change don't merge");
+    println!("dumb but different change don't merge");
+    println!("dumb but different change don't merge");
 
     loop {}
 }
