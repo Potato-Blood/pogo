@@ -1,7 +1,9 @@
 name: Rust CI - Build & Tests
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    branches:
+      - 'main'
     paths:
       - '**.rs'
       - '**/Cargo.toml'
