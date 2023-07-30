@@ -12,11 +12,16 @@ let tick = 0;
 let mousePosX = 0;
 let mousePosY = 0;
 
-const numOfHats = 20; // FIXME: when YAML available, move to that instaead of hard coding trash
+const numOfHats = 32; // FIXME: when YAML available, move to that instaead of hard coding trash
 const hats = new Array(numOfHats)
 let hatIdx = 0;
 let hatEnabled = false;
 let hatSpinCount = 0;
+
+
+const numOfMouths = 11; // FIXME: when YAML available, move to that instaead of hard coding trash
+const mouths = new Array(numOfMouths)
+let mouthIdx = 0;
 
 // Created a websocket that when closed tries to reconnet with some backoff
 startWebsocket = (ip, port, backoff) => {
@@ -49,7 +54,7 @@ startWebsocket = (ip, port, backoff) => {
       if (hatIdx == prevIdx) {
         hatIdx = (hatIdx + 1) % hats.length;
       }
-      hatSpinCount = 20;
+      hatSpinCount += 20;
       console.log(hatIdx);
     }
     ws.send("readyformore!");
@@ -72,25 +77,31 @@ startWebsocket("localhost", "9001", 32); // Start the websocket with expoentiona
 // Load images before setup
 function preload() {
 
-  images.mouthClosedEyesOpen = loadImage("assets/1.png");
-  images.mouthClosedEyesClosed = loadImage("assets/2.png");
-  images.mouthOpenEyesOpen = loadImage("assets/3.png");
-  images.mouthOpenEyesClosed = loadImage("assets/4.png");
+  images.mouthClosed = loadImage("assets/mouthClosed.png");
+  images.eyesClosed = loadImage("assets/eyesClosed.png");
+  images.eyesOpen = loadImage("assets/eyesOpen.png");
+
   images.keyPressDown = loadImage("assets/down.png");
   images.keyPressUp = loadImage("assets/up.png");
   images.bg = loadImage("assets/bg.png");
   images.mouse = loadImage("assets/mouse.png");
 
   for (let i = 0; i < numOfHats; i++) {
-    hats[i] = loadImage(`assets/hats/${i}.png`)
+    hats[i] = loadImage(`assets/Hats/${i}.png`)
+  }
+
+  for (let i = 0; i < numOfMouths; i++) {
+    mouths[i] = loadImage(`assets/MouthShapes/${i}.png`)
   }
 
 }
+let count = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
-
+let rndMouth;
+let temp;
 function draw() {
   // There must be a better way to do this
   tick++;
@@ -101,15 +112,18 @@ function draw() {
     tick = 0;
     blinkDelay = Math.floor(random(blinkDelayMin, blinkDelayMax));
   }
-  let imgBlinking = images.mouthClosedEyesOpen;
-  if (talking && blinking) {
-    imgBlinking = images.mouthOpenEyesClosed;
-  } else if (talking) {
-    imgBlinking = images.mouthOpenEyesOpen;
-  } else if (blinking) {
-    imgBlinking = images.mouthClosedEyesClosed;
-  }
 
+
+  count++;
+  if(count === 10){
+    rndMouth = mouths[Math.floor(random(0,(mouths.length)))]
+    count = 0;
+  }
+  
+  
+
+  const imgMouth = talking ? rndMouth : images.mouthClosed;
+  const imgEyes = blinking ? images.eyesClosed : images.eyesOpen;
   const imgHand = keyPress ? images.keyPressDown : images.keyPressUp;
 
 
@@ -135,8 +149,8 @@ function draw() {
   //background(0, 255, 0);
   clear();
   image(images.bg, 0, 0);
-  image(imgBlinking, 0, 0);
-
+  image(imgEyes, 0, 0);
+  image(imgMouth, 0, 0);
   image(imgHand, 0, 0);
   image(images.mouse, scaledMouseX - 35, scaledMouseY - 25);
 
@@ -150,7 +164,7 @@ function draw() {
   // Draw triangle to fill the missing area left by the curves
   triangle(225, 170 + 229, 200, 119 + 229, scaledMouseX, scaledMouseY);
 
-  strokeWeight(6);
+  strokeWeight(8);
   stroke(strokeColour);
 
   // Draw two curves for the mouse hand using scaledMouseX/Y
@@ -175,34 +189,46 @@ function draw() {
     200 + 229//c2
   );
   drawHat(hatIdx)
-}
-var delay = 1;
-var delayFactor = 1; 
-var fastDelayCycles = 6; 
-var currentCycle = 0; 
+}var delay = 1;
+var delayFactor = 1;
+var fastDelayCycles = 6;
+var currentCycle = 0;
 var hat;
+var prevHat;
 
 function drawHat(hatIdx) {
+  if (hatSpinCount > 20) {
+    delay = 1;
+    delayFactor = 1;
+    fastDelayCycles = 6;
+    currentCycle = 0;
+    hatSpinCount = 20;
+  }
+
   if (delay > 0) {
-    delay -= 1;
-    //console.log(delay);
+    delay--;
   } else {
     if (hatSpinCount > 0) {
-      //console.log("HatSpinCount: " + hatSpinCount);
+      prevHat = hat;
       hat = hats[Math.floor(Math.random() * hats.length)];
-      hatSpinCount -= 1;
+      
+      while (hat === prevHat) {
+        hat = hats[Math.floor(Math.random() * hats.length)];
+      }
+      
+      hatSpinCount--;
 
       if (currentCycle < fastDelayCycles) {
         delay = 1;
-        currentCycle += 1;
+        currentCycle++;
       } else {
-        delay = delayFactor; 
-        delayFactor += 1; 
+        delay = delayFactor;
+        delayFactor++;
       }
     } else {
       hat = hats[hatIdx];
-      delayFactor = 1; 
-      currentCycle = 0; 
+      delayFactor = 1;
+      currentCycle = 0;
     }
   }
 
