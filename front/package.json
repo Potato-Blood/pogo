@@ -11,9 +11,12 @@
   "author": "Potato-Blood",
   "license": "ISC",
   "devDependencies": {
+    "@types/google-protobuf": "^3.15.6",
     "@types/p5": "^1.6.2",
+    "ignore-loader": "^0.1.2",
     "p5": "^1.7.0",
     "ts-loader": "^9.4.4",
+    "ts-protoc-gen": "^0.15.0",
     "typescript": "^5.0.0",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",

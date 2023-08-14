@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package pogo.events;
+
+enum PRESS_RELEASE {
+    PRESSED = 0;
+    RELEASED = 1;
+}
+
+message KeyboardEvent {
+    PRESS_RELEASE state = 1;
+}
+
+message MouseMoveEvent {
+    int64 deltaX = 1;
+    int64 deltaY = 2;
+}
+
+message MousePressEvent {
+    PRESS_RELEASE state = 1;
+}
+message MouseEvent {
+    oneof event {
+        MouseMoveEvent mouseMoveEvent = 1;
+        MousePressEvent mousePressEvent = 2;
+    }
+}
+
+message VoiceEvent {
+    enum VOICE_EVENT {
+        ON = 0;
+        OFF = 1;
+    }
+    VOICE_EVENT VoiceEvent = 1;
+}
+
+message HatEvent {
+}
+
+message Event {
+    oneof event {
+        KeyboardEvent keyboardEvent = 1;
+        MouseEvent mouseEvent = 2;
+        VoiceEvent voiceEvent = 3;
+        HatEvent hatEvent = 4;
+    }
+}

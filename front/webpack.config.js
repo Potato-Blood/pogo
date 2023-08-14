@@ -8,17 +8,18 @@ module.exports = {
     filename: 'bundle.js',
   },
   resolve: {
-    extensions: ['.ts', '.js'],
-    alias: {
-
-    }
+    extensions: ['.ts', '.js', '.d.ts'],
   },
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules|\.d\.ts$/
+      },
+      {
+        test: /\.d\.ts$/,
+        loader: 'ignore-loader' // required for https://stackoverflow.com/questions/38231645/typescriptwebpack-typescript-emmited-no-output-for-index-d-ts
       },
     ],
   },

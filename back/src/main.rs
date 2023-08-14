@@ -4,7 +4,7 @@ mod listeners;
 mod utils;
 mod websockets;
 use crate::listeners::{kbm_listener, voice_listener};
-use crate::websockets::*;
+use crate::websockets::websocket::*;
 
 const MAPPED_HEIGHT_MAX: f64 = 1080.0;
 const MAPPED_WIDTH_MAX: f64 = 1920.0;

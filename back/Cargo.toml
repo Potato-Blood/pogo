@@ -9,5 +9,10 @@ description = "The backend of Pogo - a lightweight bit of software used for stre
 
 [dependencies]
 cpal = "0.15.2"
+prost = "0.11.9"
+prost-types = "0.11.9"
 rdev = "0.5.3"
 ws = "0.9.2"
+
+[build-dependencies]
+prost-build = { version = "0.11.9"}
