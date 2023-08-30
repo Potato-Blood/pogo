@@ -1,7 +1,8 @@
 // Gamepad Listener
 use std::{
+    result,
     sync::mpsc,
-    thread::{self, JoinHandle}, result,
+    thread::{self, JoinHandle},
 };
 
 use gilrs::{Button, Error, Event, Gilrs};

@@ -3,7 +3,7 @@ use std::sync::{mpsc, Arc, Mutex};
 mod listeners;
 mod utils;
 mod websockets;
-use crate::listeners::{kbm_listener, voice_listener, gamepad_listener};
+use crate::listeners::{gamepad_listener, kbm_listener, voice_listener};
 use crate::websockets::*;
 
 const MAPPED_HEIGHT_MAX: f64 = 1080.0;
