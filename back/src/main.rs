@@ -3,7 +3,7 @@ use std::sync::{mpsc, Arc, Mutex};
 mod listeners;
 mod utils;
 mod websockets;
-use crate::listeners::{kbm_listener, voice_listener};
+use crate::listeners::{kbm_listener, voice_listener, gamepad_listener};
 use crate::websockets::*;
 
 const MAPPED_HEIGHT_MAX: f64 = 1080.0;
@@ -25,7 +25,11 @@ fn main() {
     let wst = make_websocket_server_thread(rx);
     println!("Websocket Server started");
 
+    let controller_lt = gamepad_listener::make_listener_thread(tx.clone());
+    println!("Controller listener started");
+
     kbm_lt.join().unwrap();
+    controller_lt.join().unwrap();
     wst.join().unwrap();
 
     loop {}
