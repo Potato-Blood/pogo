@@ -1,4 +1,4 @@
-FROM node:20.8.0 as node
+FROM node:20.9.0 as node
 
 FROM mcr.microsoft.com/devcontainers/rust:1-1-bullseye
 
