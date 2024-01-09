@@ -9,6 +9,6 @@ description = "The backend of Pogo - a lightweight bit of software used for stre
 
 [dependencies]
 cpal = "0.15.2"
-gilrs = "0.10.3"
+gilrs = "0.10.4"
 rdev = "0.5.3"
 ws = "0.9.2"
